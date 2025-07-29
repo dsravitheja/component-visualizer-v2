@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Software Component Interface Visualizer - A React-based tool for visualizing software component interfaces from Excel files" />
+    <meta name="keywords" content="software architecture, component visualization, interface mapping, Excel processing, D3.js" />
+    <meta name="author" content="Component Visualizer" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://your-username.github.io/component-visualizer-v2/" />
+    <meta property="og:title" content="Component Visualizer" />
+    <meta property="og:description" content="Visualize software component interfaces from Excel files with interactive D3.js diagrams" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://your-username.github.io/component-visualizer-v2/" />
+    <meta property="twitter:title" content="Component Visualizer" />
+    <meta property="twitter:description" content="Visualize software component interfaces from Excel files with interactive D3.js diagrams" />
+    
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Theme color for mobile browsers -->
+    <meta name="theme-color" content="#2563eb" />
+    
+    <!-- Accessibility -->
+    <meta name="color-scheme" content="light dark" />
+    
+    <title>Component Visualizer - Software Interface Mapping</title>
+    
+    <style>
+      /* Prevent flash of unstyled content */
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+        background-color: #f9fafb;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+      }
+      
+      body.loaded {
+        opacity: 1;
+      }
+      
+      /* Loading spinner for initial load */
+      .initial-loader {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+      }
+      
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #e5e7eb;
+        border-top: 3px solid #2563eb;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      .loaded .initial-loader {
+        display: none;
+      }
+      
+      /* Dark mode support */
+      @media (prefers-color-scheme: dark) {
+        body {
+          background-color: #111827;
+          color: #f9fafb;
+        }
+      }
+      
+      /* High contrast mode support */
+      @media (prefers-contrast: high) {
+        body {
+          background-color: white;
+          color: black;
+        }
+      }
+      
+      /* Reduced motion support */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    
+    <!-- Initial loading indicator -->
+    <div class="initial-loader">
+      <div class="spinner"></div>
+    </div>
+    
+    <!-- Fallback for users with JavaScript disabled -->
+    <noscript>
+      <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+        font-family: system-ui, sans-serif;
+      ">
+        <h1 style="color: #1f2937; margin-bottom: 16px;">JavaScript Required</h1>
+        <p style="color: #6b7280; max-width: 400px;">
+          Component Visualizer requires JavaScript to run. Please enable JavaScript in your browser settings and refresh the page.
+        </p>
+      </div>
+    </noscript>
+    
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <script>
+      // Remove loading class when page is loaded
+      window.addEventListener('load', function() {
+        document.body.classList.add('loaded');
+      });
+      
+      // Fallback to remove loading class after timeout
+      setTimeout(function() {
+        document.body.classList.add('loaded');
+      }, 3000);
+    </script>
+  </body>
+</html>
