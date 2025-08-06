@@ -1,5 +1,5 @@
 import React from 'react';
-import { useApp } from '@/contexts/AppContext';
+import { useApp } from '@/contexts/hooks';
 
 interface LoadingProps {
   size?: 'sm' | 'md' | 'lg';
@@ -35,7 +35,7 @@ export const Loading: React.FC<LoadingProps> = ({
         }}
       />
       {text && (
-        <p className={`${textSizeClasses[size]} text-gray-600 font-medium`}>
+        <p className={`${textSizeClasses[size]} text-gray-600 dark:text-gray-400 font-medium`}>
           {text}
         </p>
       )}
@@ -45,7 +45,7 @@ export const Loading: React.FC<LoadingProps> = ({
   if (overlay) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6 shadow-xl">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl">
           {spinner}
         </div>
       </div>
@@ -71,7 +71,7 @@ export const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({
       {Array.from({ length: lines }).map((_, index) => (
         <div
           key={index}
-          className={`h-4 bg-gray-200 rounded mb-2 ${
+          className={`h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2 ${
             index === lines - 1 ? 'w-3/4' : 'w-full'
           }`}
           style={{

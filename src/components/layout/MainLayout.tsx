@@ -1,5 +1,5 @@
 import React from 'react';
-import { useApp } from '@/contexts/AppContext';
+import { useApp } from '@/contexts/hooks';
 import { Loading } from '@/components/ui/Loading';
 
 interface MainLayoutProps {

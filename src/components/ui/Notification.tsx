@@ -1,5 +1,5 @@
 import React from 'react';
-import { useApp } from '@/contexts/AppContext';
+import { useApp } from '@/contexts/hooks';
 import { Notification as NotificationType } from '@/types';
 
 interface NotificationProps {
@@ -33,24 +33,24 @@ const NotificationItem: React.FC<NotificationProps> = ({ notification }) => {
   };
 
   const backgroundsByType = {
-    success: 'bg-green-50 border-green-200',
-    error: 'bg-red-50 border-red-200',
-    warning: 'bg-yellow-50 border-yellow-200',
-    info: 'bg-blue-50 border-blue-200',
+    success: 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800',
+    error: 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800',
+    warning: 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800',
+    info: 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800',
   };
 
   const titleColorsByType = {
-    success: 'text-green-800',
-    error: 'text-red-800',
-    warning: 'text-yellow-800',
-    info: 'text-blue-800',
+    success: 'text-green-800 dark:text-green-200',
+    error: 'text-red-800 dark:text-red-200',
+    warning: 'text-yellow-800 dark:text-yellow-200',
+    info: 'text-blue-800 dark:text-blue-200',
   };
 
   const messageColorsByType = {
-    success: 'text-green-700',
-    error: 'text-red-700',
-    warning: 'text-yellow-700',
-    info: 'text-blue-700',
+    success: 'text-green-700 dark:text-green-300',
+    error: 'text-red-700 dark:text-red-300',
+    warning: 'text-yellow-700 dark:text-yellow-300',
+    info: 'text-blue-700 dark:text-blue-300',
   };
 
   return (
@@ -75,7 +75,7 @@ const NotificationItem: React.FC<NotificationProps> = ({ notification }) => {
                   className={`text-sm font-medium px-3 py-1 rounded-md transition-colors ${
                     action.variant === 'primary'
                       ? 'bg-primary-600 text-white hover:bg-primary-700'
-                      : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                      : 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500'
                   }`}
                 >
                   {action.label}
@@ -87,7 +87,7 @@ const NotificationItem: React.FC<NotificationProps> = ({ notification }) => {
         <div className="ml-4 flex-shrink-0">
           <button
             onClick={() => removeNotification(notification.id)}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

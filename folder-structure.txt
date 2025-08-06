@@ -1,0 +1,36 @@
+.
+├── eslint.config.js
+├── folder-structure.txt
+├── index.html
+├── package-lock.json
+├── package.json
+├── public
+│   └── vite.svg
+├── README.md
+├── src
+│   ├── App.css
+│   ├── App.tsx
+│   ├── assets
+│   │   └── react.svg
+│   ├── components
+│   │   ├── layout
+│   │   │   └── MainLayout.tsx
+│   │   └── ui
+│   │       ├── ErrorBoundary.tsx
+│   │       ├── Loading.tsx
+│   │       └── Notification.tsx
+│   ├── contexts
+│   │   ├── AppContext.tsx
+│   │   ├── hooks.ts
+│   │   └── types.ts
+│   ├── index.css
+│   ├── main.tsx
+│   ├── types
+│   │   └── index.ts
+│   └── vite-env.d.ts
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
+
+9 directories, 25 files

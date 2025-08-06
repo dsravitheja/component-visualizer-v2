@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { AppProvider, useApp } from '@/contexts/AppContext';
+import { AppProvider } from '@/contexts/AppContext';
+import { useApp } from '@/contexts/hooks';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { NotificationContainer } from '@/components/ui/Notification';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
@@ -7,25 +8,29 @@ import { ComponentData } from '@/types';
 
 // Main App Content Component
 const AppContent: React.FC = () => {
-  const { state, addNotification } = useApp();
+  const { addNotification } = useApp();
   const [data, setData] = React.useState<ComponentData | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
 
   // Welcome message on first load
   useEffect(() => {
-    const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
-    if (!hasSeenWelcome) {
-      addNotification({
-        type: 'info',
-        title: 'Welcome to Component Visualizer!',
-        message: 'Upload an Excel file to visualize your software component interfaces.',
-        duration: 8000,
-      });
-      localStorage.setItem('hasSeenWelcome', 'true');
+    try {
+      const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
+      if (!hasSeenWelcome) {
+        addNotification({
+          type: 'info',
+          title: 'Welcome to Component Visualizer!',
+          message: 'Upload an Excel file to visualize your software component interfaces.',
+          duration: 8000,
+        });
+        localStorage.setItem('hasSeenWelcome', 'true');
+      }
+    } catch (error) {
+      console.warn('Could not access localStorage:', error);
     }
   }, [addNotification]);
 
-  const handleFileUpload = async (file: File) => {
+  const handleFileUpload = async () => {
     setIsLoading(true);
     
     try {
@@ -116,7 +121,7 @@ const AppContent: React.FC = () => {
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
-                      handleFileUpload(file);
+                      handleFileUpload();
                     }
                   }}
                   className="sr-only"

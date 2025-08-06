@@ -1,23 +1,18 @@
-// Core component types
+// Core data types for component visualization
 export interface ComponentNode {
   id: string;
   name: string;
-  type: 'input' | 'solution' | 'output' | 'module' | 'class' | 'interface' | 'service';
-  category?: string;
+  type: 'service' | 'interface' | 'module' | 'class' | 'utility';
   description?: string;
-  x?: number;
-  y?: number;
-  fx?: number; // Fixed position for D3
-  fy?: number;
+  metadata?: Record<string, any>;
 }
 
 export interface ComponentLink {
   source: string;
   target: string;
-  type: 'input' | 'output' | 'dependency';
-  color?: string;
-  category?: string;
-  strength?: number;
+  type: 'dependency' | 'implements' | 'extends' | 'uses';
+  label?: string;
+  metadata?: Record<string, any>;
 }
 
 export interface ComponentData {
@@ -26,12 +21,58 @@ export interface ComponentData {
   metadata?: {
     title?: string;
     description?: string;
-    version?: string;
     lastModified?: Date;
+    version?: string;
   };
 }
 
-// Excel data structure
+// Theme and UI types
+export type Theme = 'light' | 'dark';
+
+export interface AccessibilitySettings {
+  reduceMotion: boolean;
+  highContrast: boolean;
+  screenReaderMode: boolean;
+  keyboardNavigation: boolean;
+}
+
+// Notification system
+export interface NotificationAction {
+  label: string;
+  onClick: () => void;
+  variant?: 'primary' | 'secondary';
+}
+
+export interface Notification {
+  id: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+  title: string;
+  message: string;
+  duration?: number; // 0 means permanent
+  actions?: NotificationAction[];
+}
+
+// Application state
+export interface AppState {
+  theme: Theme;
+  accessibility: AccessibilitySettings;
+  globalLoading: boolean;
+  notifications: Notification[];
+}
+
+// File processing types
+export interface FileProcessingResult {
+  data: ComponentData;
+  warnings?: string[];
+  processingTime?: number;
+}
+
+export interface ProcessingError extends Error {
+  code: string;
+  details?: Record<string, any>;
+}
+
+// Excel data structure (matching your existing processor)
 export interface ExcelData {
   Solutions: string;
   'Solution Input': string;
@@ -42,72 +83,19 @@ export interface ExcelData {
   Outputs: string;
 }
 
-// Processing result types
-export interface ProcessingResult {
-  success: boolean;
-  data?: ComponentData;
-  error?: string;
-  warnings?: string[];
-  processingTime?: number;
+// Visualization types for D3
+export interface VisualizationNode extends ComponentNode {
+  x?: number;
+  y?: number;
+  fx?: number | null;
+  fy?: number | null;
+  vx?: number;
+  vy?: number;
 }
 
-// UI State types
-export interface AppState {
-  theme: 'light' | 'dark';
-  accessibility: AccessibilitySettings;
-  globalLoading: boolean;
-  notifications: Notification[];
+export interface VisualizationLink extends ComponentLink {
+  source: VisualizationNode | string;
+  target: VisualizationNode | string;
+  color?: string;
+  category?: string;
 }
-
-export interface AccessibilitySettings {
-  reduceMotion: boolean;
-  highContrast: boolean;
-  screenReaderMode: boolean;
-  keyboardNavigation: boolean;
-}
-
-export interface Notification {
-  id: string;
-  type: 'success' | 'error' | 'warning' | 'info';
-  title: string;
-  message: string;
-  duration?: number;
-  actions?: NotificationAction[];
-}
-
-export interface NotificationAction {
-  label: string;
-  onClick: () => void;
-  variant?: 'primary' | 'secondary';
-}
-
-// File processing types
-export interface FileUploadState {
-  dragActive: boolean;
-  uploading: boolean;
-  validationErrors: ValidationError[];
-  previewData: PreviewData | null;
-}
-
-export interface ValidationError {
-  type: 'size' | 'format' | 'structure' | 'security';
-  message: string;
-  severity: 'error' | 'warning';
-  field?: string;
-}
-
-export interface PreviewData {
-  fileName: string;
-  fileSize: number;
-  sheets: string[];
-  rowCount: number;
-  columnCount: number;
-  columns: string[];
-  sampleData: Record<string, any>[];
-}
-
-// Theme types
-export type Theme = 'light' | 'dark';
-
-// Export format types
-export type ExportFormat = 'png' | 'svg' | 'pdf' | 'json';

@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useReducer, useCallback, useEffect } from 'react';
-import { AppState, AccessibilitySettings, Notification, Theme } from '@/types';
+import React, { createContext, useReducer, useCallback, useEffect } from 'react';
+import { Notification, Theme, AccessibilitySettings, AppState } from '@/types';
 
 // Action types
-type AppAction =
+export type AppAction =
   | { type: 'SET_THEME'; payload: Theme }
   | { type: 'SET_ACCESSIBILITY'; payload: Partial<AccessibilitySettings> }
   | { type: 'SET_LOADING'; payload: boolean }
@@ -10,8 +10,19 @@ type AppAction =
   | { type: 'REMOVE_NOTIFICATION'; payload: string }
   | { type: 'CLEAR_NOTIFICATIONS' };
 
+// Context interface
+export interface AppContextType {
+  state: AppState;
+  setTheme: (theme: Theme) => void;
+  setAccessibility: (settings: Partial<AccessibilitySettings>) => void;
+  setGlobalLoading: (loading: boolean) => void;
+  addNotification: (notification: Omit<Notification, 'id'>) => void;
+  removeNotification: (id: string) => void;
+  clearNotifications: () => void;
+}
+
 // Initial state
-const initialState: AppState = {
+export const initialState: AppState = {
   theme: 'light',
   accessibility: {
     reduceMotion: false,
@@ -24,7 +35,7 @@ const initialState: AppState = {
 };
 
 // Reducer
-const appReducer = (state: AppState, action: AppAction): AppState => {
+export const appReducer = (state: AppState, action: AppAction): AppState => {
   switch (action.type) {
     case 'SET_THEME':
       return {
@@ -64,19 +75,8 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
   }
 };
 
-// Context interface
-interface AppContextType {
-  state: AppState;
-  setTheme: (theme: Theme) => void;
-  setAccessibility: (settings: Partial<AccessibilitySettings>) => void;
-  setGlobalLoading: (loading: boolean) => void;
-  addNotification: (notification: Omit<Notification, 'id'>) => void;
-  removeNotification: (id: string) => void;
-  clearNotifications: () => void;
-}
-
-// Create context
-const AppContext = createContext<AppContextType | undefined>(undefined);
+// Create context - EXPORTED!
+export const AppContext = createContext<AppContextType | undefined>(undefined);
 
 // Provider component
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -84,50 +84,66 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Initialize theme from localStorage or system preference
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-    
-    dispatch({ type: 'SET_THEME', payload: initialTheme });
+    try {
+      const savedTheme = localStorage.getItem('theme') as Theme;
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+      
+      dispatch({ type: 'SET_THEME', payload: initialTheme });
+    } catch (error) {
+      console.warn('Could not access localStorage for theme:', error);
+    }
   }, []);
 
   // Initialize accessibility settings from localStorage or system preferences
   useEffect(() => {
-    const savedAccessibility = localStorage.getItem('accessibility');
-    const systemReduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const systemHighContrast = window.matchMedia('(prefers-contrast: high)').matches;
-    
-    let accessibility = state.accessibility;
-    
-    if (savedAccessibility) {
-      accessibility = { ...accessibility, ...JSON.parse(savedAccessibility) };
+    try {
+      const savedAccessibility = localStorage.getItem('accessibility');
+      const systemReduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const systemHighContrast = window.matchMedia('(prefers-contrast: high)').matches;
+      
+      let accessibility = state.accessibility;
+      
+      if (savedAccessibility) {
+        accessibility = { ...accessibility, ...JSON.parse(savedAccessibility) };
+      }
+      
+      // Override with system preferences
+      accessibility = {
+        ...accessibility,
+        reduceMotion: systemReduceMotion,
+        highContrast: systemHighContrast,
+      };
+      
+      dispatch({ type: 'SET_ACCESSIBILITY', payload: accessibility });
+    } catch (error) {
+      console.warn('Could not access localStorage for accessibility:', error);
     }
-    
-    // Override with system preferences
-    accessibility = {
-      ...accessibility,
-      reduceMotion: systemReduceMotion,
-      highContrast: systemHighContrast,
-    };
-    
-    dispatch({ type: 'SET_ACCESSIBILITY', payload: accessibility });
-  }, []);
+  }, []); // Remove dependency on state.accessibility to prevent infinite loop
 
   // Save theme to localStorage
   useEffect(() => {
-    localStorage.setItem('theme', state.theme);
-    // Apply theme to document
-    document.documentElement.classList.toggle('dark', state.theme === 'dark');
+    try {
+      localStorage.setItem('theme', state.theme);
+      // Apply theme to document
+      document.documentElement.classList.toggle('dark', state.theme === 'dark');
+    } catch (error) {
+      console.warn('Could not save theme to localStorage:', error);
+    }
   }, [state.theme]);
 
   // Save accessibility settings to localStorage
   useEffect(() => {
-    localStorage.setItem('accessibility', JSON.stringify(state.accessibility));
-    // Apply accessibility settings to document
-    document.documentElement.style.setProperty(
-      '--animation-duration',
-      state.accessibility.reduceMotion ? '0s' : '0.3s'
-    );
+    try {
+      localStorage.setItem('accessibility', JSON.stringify(state.accessibility));
+      // Apply accessibility settings to document
+      document.documentElement.style.setProperty(
+        '--animation-duration',
+        state.accessibility.reduceMotion ? '0s' : '0.3s'
+      );
+    } catch (error) {
+      console.warn('Could not save accessibility settings:', error);
+    }
   }, [state.accessibility]);
 
   const setTheme = useCallback((theme: Theme) => {
@@ -178,13 +194,4 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       {children}
     </AppContext.Provider>
   );
-};
-
-// Custom hook to use the context
-export const useApp = (): AppContextType => {
-  const context = useContext(AppContext);
-  if (!context) {
-    throw new Error('useApp must be used within an AppProvider');
-  }
-  return context;
 };
